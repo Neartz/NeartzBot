@@ -1,39 +1,24 @@
-const Discord = require('discord.js');
+const Discord = require("discord.js");
+const bot = new Discord.Client({disableEveryone: true});
 
-const bot = new Discord.Client();
+bot.on("ready", async () => {
+  console.log(`${bot.user.username} is online!`);
+  bot.user.setActivity(`Hey, Wassup!`);
+});
 
-const config = require(`./config.json`); 
-
-const fs = require('fs');
-
-const owner = '451645255461371914'
-
-let ops = {
-  owner: owner
-}
-
-bot.on('error', console.error);
 bot.on("message", async message => {
 
   if (message.author.bot) return;
-  if (message.content.indexOf(config.prefix) !== 0) return;
+  if (message.channel.type === "dm") return;
 
-  const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
+  let prefix = '-';
+  let messageArray = message.content.split(" ");
+  let cmd = messageArray[0];
+  let args = messageArray.slice(1);
 
-  try {
-    let commandFile = require(`./commands/${command}.js`);
-    commandFile.run(bot, message, args, ops);
-  } catch (err) {
-    console.error(err);
+  if (cmd === `${prefix}ping`){
+    message.channel.send("Pong!");
   }
 });
 
-bot.on('ready', arg => {
-  console.log('Бот запустился! Наверное...');
-  console.log(`${bot.user.tag} is online on ${bot.guilds.size} servers!`)
-});
-
-
-
-bot.login(process.env.BOT_TOKEN);
+bot.login(process.env.token);
